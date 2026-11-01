@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- TwinDesk — Copyright (C) 2026 inukaasith. GPL-3.0, see LICENSE. -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <title>通话</title>
+  <link rel="stylesheet" href="phonehub.css">
+</head>
+<body class="callpop">
+  <div class="cp">
+    <div id="avatar" class="cp-avatar" aria-hidden="true"></div>
+    <div class="cp-text">
+      <div id="who" class="cp-who"></div>
+      <div id="sub" class="cp-sub"></div>
+    </div>
+    <div class="cp-buttons">
+      <button id="mute" class="cp-btn" title="静音" hidden></button>
+      <button id="where" class="cp-btn" title="" hidden></button>
+      <button id="decline" class="cp-btn bad" title="拒接" hidden></button>
+      <button id="answer" class="cp-btn good" title="接听" hidden></button>
+      <button id="end" class="cp-btn bad" title="挂断" hidden></button>
+    </div>
+    <button id="close" class="cp-x" title="隐藏" aria-label="隐藏">×</button>
+  </div>
+  <script src="callpop.js"></script>
+</body>
+</html>

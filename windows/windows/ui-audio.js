@@ -1,0 +1,53 @@
+// TwinDesk — Copyright (C) 2026 inukaasith. GPL-3.0, see LICENSE.
+// Audio tab: sound both ways, each its own stream: play the Mac's sound (Mac → PC)
+// and send this PC's sound (PC → Mac). Screen sound lives in Display.
+'use strict';
+
+UI.tab({
+  id: 'audio',
+  wifiOnly: true, // over Bluetooth it can't work and doesn't move the session onto Wi-Fi: says so, with Connect with Wi-Fi Direct
+  order: 70,
+  title: '音频',
+  color: 'linear-gradient(#ff6482, #ff2d55)',
+  desc: '在另一台计算机上播放本机声音。',
+  master: { get: (s) => s.audio.send || s.audio.receive, set: (v) => UI.api.setAudio({ send: v, receive: v }) },
+  badge: (s) => (s.audio.receiving || s.audio.sending ? 'on' : ''),
+  build(body) {
+    const { api } = UI;
+    const set = (partial) => api.setAudio(partial);
+    const volume = UI.slider({ min: 0, max: 1, step: 0.05, format: (v) => Math.round(v * 100) + '%' }, (v) => set({ volume: v }));
+    const mute = UI.switch((v) => set({ muteLocal: v }), { label: '发送声音时将 {me} 静音' });
+    const recvState = UI.row('', '');
+    const sendState = UI.row('', '');
+    const pair = UI.dirCards(
+      { on: { get: (s) => s.audio.receive, set: (v) => set({ receive: v }) }, label: '在 {me} 上播放 {name} 的声音', rows: [
+        UI.row('音量', '', [volume]),
+        recvState,
+      ] },
+      { on: { get: (s) => s.audio.send, set: (v) => set({ send: v }) }, label: '在 {name} 上播放 {me} 的声音', rows: [
+        UI.row('发送声音时将 {me} 静音', '', [mute]),
+        sendState,
+      ] },
+    );
+    const phoneCard = UI.phoneAudioCard(); // a phone: its sound here over Bluetooth, its media controls
+    body.append(
+      pair.el,
+      phoneCard.el,
+    );
+    return (s) => {
+      phoneCard.update(s);
+      const a = s.audio;
+      const connected = s.link.state === 'connected';
+      pair.update(s);
+      volume.set(a.volume);
+      mute.set(a.muteLocal);
+      recvState.hidden = !a.receive;
+      const nm = UI.peer(s).name;
+      const phone = UI.phoneSound && UI.phoneSound(s);
+      recvState.label.textContent = phone != null ? phone : a.receiving ? '正在播放 ' + nm : connected ? '已关闭于 ' + nm : '正在等待 ' + nm;
+      sendState.hidden = !a.send && !a.error;
+      sendState.label.textContent = a.sending ? '正在播放于 ' + nm : !connected ? '正在等待 ' + nm : !a.macAccepts ? '已关闭于 ' + nm : '正在连接…';
+      sendState.setHint(a.error || '');
+    };
+  },
+});

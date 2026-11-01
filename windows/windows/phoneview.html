@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- TwinDesk — Copyright (C) 2026 inukaasith. GPL-3.0, see LICENSE. -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; worker-src 'self'">
+  <title>手机</title>
+  <link rel="stylesheet" href="phoneview.css">
+</head>
+<body>
+  <header id="bar">
+    <span id="title"></span>
+    <span id="via" hidden></span>
+    <span class="tools"></span>
+  </header>
+  <main id="stage">
+    <canvas id="screen" tabindex="0"></canvas>
+    <div id="status">正在连接手机…</div>
+  </main>
+  <!-- The controls: phoneview-renderer.js puts them here, in the title bar's tools, or in the bottom bar -->
+  <nav id="panel" aria-label="手机控制"></nav>
+  <nav id="navbar" aria-label="手机导航"></nav>
+  <script src="../shared/vcam-feed.js"></script>
+  <script src="phoneview-renderer.js"></script>
+</body>
+</html>
